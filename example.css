@@ -1,0 +1,32 @@
+#top-left,
+#top-right,
+#bottom-left,
+#bottom-right {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  line-height: 100px;
+  background-color: red;
+  text-align: center;
+  font-size: 30px;
+}
+
+#top-left {
+  left: 0;
+  top: 0;
+}
+
+#top-right {
+  right: 0;
+  top: 0;
+}
+
+#bottom-left {
+  left: 0;
+  bottom: 0;
+}
+
+#bottom-right {
+  right: 0;
+  bottom: 0;
+}

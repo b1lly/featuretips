@@ -12,7 +12,7 @@
 
     overlay : { // Overlay styling
       enabled : true,
-      color : '#fff',
+      color : '#000',
       opacity : 0.7,
       zIndex : 999
     },
@@ -25,28 +25,42 @@
     // Collection of our "feature tips"
     tips : [
       {
-        bindToElement : '#new-features',
-        title : 'New Feature!',
-        body : 'Our new feature tip gives us the ability to create slick engagement tooltips!',
+        title : 'First Tip',
+        body : 'Feature tips give us the ability to create slick engagement tooltips!',
         triggerEventType : null,
-        triggerOnElement : null
+        triggerOnElement : null,
+        position : {
+          my : 'top left',
+          at : 'bottom right',
+          of : '#top-left'
+        }
       },
       {
-        bindToElement : '.info-icon',
-        title : 'New Feature!',
-        body : 'Our new feature tip gives us the ability to create slick engagement tooltips!',
+        title : 'Second Feature',
+        body : 'You can create a sequence of features that bind to DOM elements quickly and easily! Just pass the plugin a collection of tips!',
         triggerEventType : null,
-        triggerOnElement : null
+        triggerOnElement : null,
+        position : {
+          my : 'top right',
+          at : 'bottom left',
+          of : '#top-right',
+          collision : 'fit'
+        }
       }
     ],
 
     // Used for sanitization and incomplete tips
     tipBluePrint : {
-      bindToElement: 'body',
       title : '',
       body : '',
       triggerEventType : null,
-      triggerOnElement : null
+      triggerOnElement : null,
+      position : {
+        my : 'center',
+        at : 'center',
+        of : window,
+        collision : 'fit'
+      }
     }
   };
 
@@ -64,7 +78,7 @@
 
     showOverlay : function() {
       if (settings.overlay.enabled) {
-        $('body').append('<div id="' + settings.namespace + '-overlay"></div>');
+        $(document.body).append('<div id="' + settings.namespace + '-overlay"></div>');
 
         $('#' + settings.namespace + '-overlay').css({
           position: 'fixed',
@@ -83,28 +97,26 @@
       $('#' + settings.namespace + '-overlay').fadeOut();
     },
 
-    createTipHTML : function(tip) {
-      if ($(tip.bindToElement).length > 0) {
-        var $tipContainer = $('<div class="' + settings.namespace + '-container"></div>'),
-            $tipTitle = '<h1 class="' + settings.namespace + '-title">' + tip.title + '</h1>',
-            $tipBody = '<div class="' + settings.namespace + '-body">' + tip.body + ' </div>';
-            $tipDismiss = '<span class="dismiss">Dismiss</span>';
-            $tipClose = '<span class="dismiss close">X</span>';
+    createTip : function(tip) {
+      var $tipContainer = $('<div class="' + settings.namespace + '-container"></div>'),
+          $tipTitle = '<h1 class="' + settings.namespace + '-title">' + tip.title + '</h1>',
+          $tipBody = '<div class="' + settings.namespace + '-body">' + tip.body + ' </div>';
+          $tipDismiss = '<span class="dismiss">Dismiss</span>';
+          $tipClose = '<span class="dismiss close">X</span>';
 
-        $tipContainer
-          .append($tipClose + $tipTitle + $tipBody + $tipDismiss)
-          .css({
-            position : 'absolute',
-            zIndex : settings.overlay.zIndex + 1,
-            display : 'none'
-          }).position({
-            my : 'center',
-            at : 'center',
-            of : tip.bindToElement
-          });
-      }
+      $tipContainer
+        .append($tipClose + $tipTitle + $tipBody + $tipDismiss)
+        .data('tipData', tip)
+        .css({
+          zIndex : settings.overlay.zIndex + 1,
+          display : 'none',
+          position : 'absolute'
+        })
+        .position(tip.position);
+        
+        console.log(tip.position);
 
-      $('body').append($tipContainer);
+      $(document.body).append($tipContainer);
     },
 
     createAllTips : function() {
@@ -112,8 +124,8 @@
 
       if (settings.sequencedTips) {
         $.each(settings.tips, function() {
-          var sanitizedTip = $.extend({}, settings.tipBluePrint, this);
-          self.createTipHTML(sanitizedTip);
+          var sanitizedTip = $.extend(true, {}, settings.tipBluePrint, this);
+          self.createTip(sanitizedTip);
 
           self.bindRepositionTip();
         });
