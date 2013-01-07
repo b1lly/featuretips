@@ -1,0 +1,32 @@
+.featuretips-container { 
+  border: 1px black solid;
+  padding: 15px;
+  width: 350px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 5px 5px 5px;
+  position: relative;
+}
+
+.featuretips-container .close {
+  position: absolute;
+  right: -10px;
+  top: -12px;
+  font-size: 24px;
+  color: red;
+  font-weight: bold;
+}
+
+.featuretips-container .featuretips-title {
+  margin: 0 0 5px 0;
+  font-size: 24px;
+}
+
+.featuretips-container .featuretips-body {
+  margin: 10px 0;
+}
+
+.featuretips-container .dismiss.end,
+.featuretips-container .dismiss.next {
+  float: right;
+}
