@@ -114,8 +114,7 @@
         .css({
           zIndex : settings.overlay.zIndex + 1,
           display : 'none',
-          position : 'absolute',
-          width : tip.width
+          position : 'absolute'
         });
 
       $(document.body).append($tipContainer);
