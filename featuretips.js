@@ -43,6 +43,7 @@
   // Declare our plugin behaviors
   var methods = {
 
+    // Initializer
     init : function(options) {
       $.extend(settings, options);
 
@@ -52,6 +53,7 @@
       });
     },
 
+    // Display an overlay over the site but under the Tips
     showOverlay : function() {
       if (settings.overlay.enabled) {
         $(document.body).append('<div id="' + settings.namespace + '-overlay"></div>');
@@ -73,6 +75,11 @@
       $('#' + settings.namespace + '-overlay').fadeOut();
     },
 
+    /*
+     * Introduce a Tip to the DOM
+     * @param tip {object} tip settings (e.g. title, content, etc)
+     * @param lastTip {boolean} true or false (e.g. is the tip the last of a sequence)
+     */
     createTip : function(tip, lastTip) {
       var $tipContainer = $('<div class="' + settings.namespace + '-container"></div>'),
           $tipTitle = '<h1 class="' + settings.namespace + '-title">' + tip.title + '</h1>',
@@ -96,6 +103,7 @@
       $(document.body).append($tipContainer);
     },
 
+    // Create all the Tips based on the Collection
     createAllTips : function() {
       var self = this;
 
@@ -105,7 +113,6 @@
               lastTip = index == settings.tips.length - 1;
               
           self.createTip(sanitizedTip, lastTip);
-          self.bindRepositionTip();
         });
 
         this.bindDismissTips();
@@ -113,11 +120,19 @@
       }
     },
 
+    /*
+     * Show and position the tip
+     * @param $tipContainer {jQueryObject} the tips to show
+     */
     showTip : function($tipContainer) {
       var tipData = $tipContainer.data('tipData');
       $tipContainer.position(tipData.position).fadeIn();
     },
 
+    /*
+     * Hide the tip and unbind any traces of it
+     * @param $tipContainer {jQueryObject} the tip to hide
+     */
     hideTip : function($tipContainer) {
       $tipContainer.fadeOut();
       this.unbindRepositionTip();
@@ -131,6 +146,7 @@
 
     },
 
+    // Handle the user interaction with the Tip
     bindDismissTips : function() {
       var self = this;
 
@@ -142,6 +158,7 @@
 
         self.hideTip($containers);
 
+        // Continue through sequence if there are more tips
         if ($nextTip.length == 0) {
           self.unbindDismissTips();
           self.hideOverlay();
@@ -151,6 +168,7 @@
       });
     },
 
+    // Unbind any event listener traces
     unbindDismissTips : function() {
       $(document).undelegate('.' + settings.namespace + '-container .dismiss', 'click');
     }
