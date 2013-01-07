@@ -121,7 +121,7 @@
     },
 
     /*
-     * Show and position the tip
+     * Show and position the tip based on it's properties
      * @param $tipContainer {jQueryObject} the tips to show
      */
     showTip : function($tipContainer) {
