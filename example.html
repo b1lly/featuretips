@@ -14,7 +14,34 @@
     <div id="bottom-left">3</div>
     <div id="bottom-right">4</div>
     <script type="text/javascript">
-      $(document.body).featureTips();
+      var settings = {
+        tips : [
+          {
+            title : 'Slick Engaging Tooltips!',
+            body : 'This plugin give us the ability to create slick user engaging tooltips to highlight new features and flows!',
+            triggerEventType : null,
+            triggerOnElement : null,
+            position : {
+              my : 'left top',
+              at : 'right bottom',
+              of : '#top-left'
+            }
+          },
+          {
+            title : 'Create Sequenced Tooltips!',
+            body : 'You can create a sequence of tips that bind to DOM elements quickly and easily! Just pass the plugin a collection of tips!',
+            triggerEventType : null,
+            triggerOnElement : null,
+            position : {
+              my : 'right top',
+              at : 'left bottom',
+              of : '#top-right',
+              collision : 'fit'
+            }
+          }
+        ]
+      }
+      $(document.body).featureTips(settings);
     </script>
   </body>
 </html>
