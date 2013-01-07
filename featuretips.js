@@ -21,13 +21,18 @@
       position : null
     },
 
-    // Collection of our "feature tips"
-    tips : [],
+    // Collection of our Tips
+    tips : [
+      { // Default tip (Note: This get's bypassed if you pass tips into the plugin)
+        title : 'Welcome to Featured Tips!',
+        body : 'If you recieved this message, the plugin is working properly! To customize this message, you need to pass it some custom settings and include a collection of the tips you want to display.',
+      }
+    ],
 
     // Used for sanitization and incomplete tips
     tipBluePrint : {
-      title : 'Welcome to Featured Tips!',
-      body : 'If you recieved this message, the plugin is working properly! To customize this message, you need to pass it some custom settings and include a collection of the tips you want to display.',
+      title : '',
+      body : '',
       triggerEventType : null,
       triggerOnElement : null,
       position : {
@@ -45,9 +50,6 @@
     // Initializer
     init : function(options) {
       $.extend(settings, options);
-      if (settings.tips.length == 0) {
-        settings.tips.push(settings.tipBluePrint)
-      }
 
       return this.each(function() {
         methods.showOverlay();
