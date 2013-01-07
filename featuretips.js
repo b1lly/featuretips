@@ -25,8 +25,8 @@
     // Collection of our "feature tips"
     tips : [
       {
-        title : 'First Tip',
-        body : 'Feature tips give us the ability to create slick engagement tooltips!',
+        title : 'Slick Engaging Tooltips!',
+        body : 'This plugin give us the ability to create slick user engaging tooltips to highlight new features and flows!',
         triggerEventType : null,
         triggerOnElement : null,
         position : {
@@ -36,8 +36,8 @@
         }
       },
       {
-        title : 'Second Feature',
-        body : 'You can create a sequence of features that bind to DOM elements quickly and easily! Just pass the plugin a collection of tips!',
+        title : 'Create Sequenced Tooltips!',
+        body : 'You can create a sequence of tips that bind to DOM elements quickly and easily! Just pass the plugin a collection of tips!',
         triggerEventType : null,
         triggerOnElement : null,
         position : {
@@ -97,11 +97,15 @@
       $('#' + settings.namespace + '-overlay').fadeOut();
     },
 
-    createTip : function(tip) {
+    createTip : function(tip, lastTip) {
       var $tipContainer = $('<div class="' + settings.namespace + '-container"></div>'),
           $tipTitle = '<h1 class="' + settings.namespace + '-title">' + tip.title + '</h1>',
           $tipBody = '<div class="' + settings.namespace + '-body">' + tip.body + ' </div>';
-          $tipDismiss = '<span class="dismiss">Dismiss</span>';
+          if (lastTip) {
+            $tipDismiss = '<span class="dismiss end">Dismiss</span>';
+          } else {
+            $tipDismiss = '<span class="dismiss next">Next</span>';
+          }
           $tipClose = '<span class="dismiss close">X</span>';
 
       $tipContainer
@@ -110,7 +114,8 @@
         .css({
           zIndex : settings.overlay.zIndex + 1,
           display : 'none',
-          position : 'absolute'
+          position : 'absolute',
+          width : tip.width
         });
 
       $(document.body).append($tipContainer);
@@ -120,10 +125,11 @@
       var self = this;
 
       if (settings.sequencedTips) {
-        $.each(settings.tips, function() {
-          var sanitizedTip = $.extend(true, {}, settings.tipBluePrint, this);
-          self.createTip(sanitizedTip);
-
+        $.each(settings.tips, function(index) {
+          var sanitizedTip = $.extend(true, {}, settings.tipBluePrint, this),
+              lastTip = index == settings.tips.length - 1;
+              
+          self.createTip(sanitizedTip, lastTip);
           self.bindRepositionTip();
         });
 
