@@ -7,8 +7,7 @@
   // Default settings
   var settings = {
     namespace : 'featuretips', // Changing this will remove (featuretip.css) styling
-    sequencedTips : true, // Display the tooltips in a sequence
-                          // Note: (invoked by dismissale of a previous tip)
+    sequencedTips : true, // Display the Tips in a sequence (only if there are multiple)
 
     overlay : { // Overlay styling
       enabled : true,
@@ -27,8 +26,8 @@
 
     // Used for sanitization and incomplete tips
     tipBluePrint : {
-      title : '',
-      body : '',
+      title : 'Welcome to Featured Tips!',
+      body : 'If you recieved this message, the plugin is working properly! To customize this message, you need to pass it some custom settings and include a collection of the tips you want to display.',
       triggerEventType : null,
       triggerOnElement : null,
       position : {
@@ -46,6 +45,9 @@
     // Initializer
     init : function(options) {
       $.extend(settings, options);
+      if (settings.tips.length == 0) {
+        settings.tips.push(settings.tipBluePrint)
+      }
 
       return this.each(function() {
         methods.showOverlay();
