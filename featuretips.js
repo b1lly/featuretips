@@ -30,8 +30,8 @@
         triggerEventType : null,
         triggerOnElement : null,
         position : {
-          my : 'top left',
-          at : 'bottom right',
+          my : 'left top',
+          at : 'right bottom',
           of : '#top-left'
         }
       },
@@ -41,8 +41,8 @@
         triggerEventType : null,
         triggerOnElement : null,
         position : {
-          my : 'top right',
-          at : 'bottom left',
+          my : 'right top',
+          at : 'left bottom',
           of : '#top-right',
           collision : 'fit'
         }
@@ -111,10 +111,7 @@
           zIndex : settings.overlay.zIndex + 1,
           display : 'none',
           position : 'absolute'
-        })
-        .position(tip.position);
-        
-        console.log(tip.position);
+        });
 
       $(document.body).append($tipContainer);
     },
@@ -136,7 +133,8 @@
     },
 
     showTip : function($tipContainer) {
-      $tipContainer.fadeIn();
+      var tipData = $tipContainer.data('tipData');
+      $tipContainer.position(tipData.position).fadeIn();
     },
 
     hideTip : function($tipContainer) {
