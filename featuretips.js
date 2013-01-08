@@ -17,8 +17,7 @@
     },
 
     arrows : {
-      enabled : false,
-      position : null
+      direction : 'up'
     },
 
     // Collection of our Tips
@@ -36,8 +35,8 @@
       triggerEventType : null,
       triggerOnElement : null,
       position : {
-        my : 'center',
-        at : 'center',
+        my : 'center top',
+        at : 'center bottom',
         of : window,
         collision : 'fit'
       }
@@ -86,17 +85,18 @@
      */
     createTip : function(tip, lastTip) {
       var $tipContainer = $('<div class="' + settings.namespace + '-container"></div>'),
-          $tipTitle = '<h1 class="' + settings.namespace + '-title">' + tip.title + '</h1>',
-          $tipBody = '<div class="' + settings.namespace + '-body">' + tip.body + ' </div>';
+          tipTitle = '<h1 class="' + settings.namespace + '-title">' + tip.title + '</h1>',
+          tipBody = '<div class="' + settings.namespace + '-body">' + tip.body + ' </div>';
           if (lastTip) {
-            $tipDismiss = '<span class="dismiss end">Dismiss</span>';
+            tipDismiss = '<span class="dismiss end">Dismiss</span>';
           } else {
-            $tipDismiss = '<span class="dismiss next">Next</span>';
+            tipDismiss = '<span class="dismiss next">Next</span>';
           }
-          $tipClose = '<span class="dismiss close">X</span>';
+          tipClose = '<span class="dismiss close">X</span>';
+          tipArrow = '<span class="arrow arrow-' + settings.arrows.direction + '"></span>';
 
       $tipContainer
-        .append($tipClose + $tipTitle + $tipBody + $tipDismiss)
+        .append(tipClose + tipTitle + tipBody + tipDismiss + tipArrow)
         .data('tipData', tip)
         .css({
           zIndex : settings.overlay.zIndex + 1,
@@ -131,6 +131,12 @@
     showTip : function($tipContainer) {
       var tipData = $tipContainer.data('tipData');
       $tipContainer.position(tipData.position).fadeIn();
+      $tipContainer.find('.arrow').position({
+        my : 'center bottom',
+        at : 'center bottom',
+        of : tipData.position.of,
+        collision : 'fit'
+      });
     },
 
     /*
