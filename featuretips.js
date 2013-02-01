@@ -1,13 +1,15 @@
-/*
- * Feature Tips
- * Written by Billy Bastardi
+/**
+ * Feature Tips jQuery Plugin
+ * @author by Billy Bastardi (billy@wabism.com)
+ *
  */
 ;(function($) {
 
   // Default settings
   var settings = {
     namespace : 'featuretips', // Changing this will remove (featuretip.css) styling
-    sequencedTips : true, // Display the Tips in a sequence (only if there are multiple)
+    style : 'default',
+    showOnLoad : true,
 
     overlay : { // Overlay styling
       enabled : true,
@@ -21,46 +23,44 @@
     },
 
     // Collection of our Tips
-    tips : [
-      { // Default tip (Note: This get's bypassed if you pass tips into the plugin)
-        title : 'Welcome to Featured Tips!',
-        body : 'If you recieved this message, the plugin is working properly! To customize this message, you need to pass it some custom settings and include a collection of the tips you want to display.',
-      }
-    ],
+    tips : [],
 
     // Used for sanitization and incomplete tips
     tipBluePrint : {
       title : '',
       body : '',
-      triggerEventType : null,
-      triggerOnElement : null,
       position : {
         my : 'center top',
         at : 'center bottom',
         of : window,
         collision : 'fit'
-      }
+      },
+      highlightElement : true
     }
   };
 
-  // Declare our plugin behaviors
+  // Declare our Plugin behaviors
   var methods = {
 
     // Initializer
     init : function(options) {
-      $.extend(settings, options);
+      $.extend(true, settings, options);
 
       return this.each(function() {
-        methods.showOverlay();
+        methods.createOverlay();
         methods.createAllTips();
       });
+    },
+
+    createOverlay : function() {
+      if ($('#' + settings.namespace + '-overlay').length == 0) {
+        $(document.body).append('<div id="' + settings.namespace + '-overlay"></div>');
+      }
     },
 
     // Display an overlay over the site but under the Tips
     showOverlay : function() {
       if (settings.overlay.enabled) {
-        $(document.body).append('<div id="' + settings.namespace + '-overlay"></div>');
-
         $('#' + settings.namespace + '-overlay').css({
           position: 'fixed',
           top: 0,
@@ -78,22 +78,24 @@
       $('#' + settings.namespace + '-overlay').fadeOut();
     },
 
-    /*
+    /**
      * Introduce a Tip to the DOM
      * @param tip {object} tip settings (e.g. title, content, etc)
      * @param lastTip {boolean} true or false (e.g. is the tip the last of a sequence)
      */
     createTip : function(tip, lastTip) {
-      var $tipContainer = $('<div class="' + settings.namespace + '-container"></div>'),
+      var $tipContainer = $('<div class="' + settings.namespace + '-container ' + settings.style + '"></div>');
+      var tipDismiss,
           tipTitle = '<h1 class="' + settings.namespace + '-title">' + tip.title + '</h1>',
-          tipBody = '<div class="' + settings.namespace + '-body">' + tip.body + ' </div>';
-          if (lastTip) {
-            tipDismiss = '<span class="dismiss end">Dismiss</span>';
-          } else {
-            tipDismiss = '<span class="dismiss next">Next</span>';
-          }
-          tipClose = '<span class="dismiss close">X</span>';
+          tipBody = '<div class="' + settings.namespace + '-body">' + tip.body + ' </div>',
+          tipClose = '<span class="dismiss close">X</span>',
           tipArrow = '<span class="arrow arrow-' + settings.arrows.direction + '"></span>';
+
+      if (lastTip) {
+        tipDismiss = '<span class="dismiss end">Dismiss</span>';
+      } else {
+        tipDismiss = '<span class="dismiss next">Next</span>';
+      }
 
       $tipContainer
         .append(tipClose + tipTitle + tipBody + tipDismiss + tipArrow)
@@ -111,20 +113,22 @@
     createAllTips : function() {
       var self = this;
 
-      if (settings.sequencedTips) {
-        $.each(settings.tips, function(index) {
-          var sanitizedTip = $.extend(true, {}, settings.tipBluePrint, this),
-              lastTip = index == settings.tips.length - 1;
-              
-          self.createTip(sanitizedTip, lastTip);
-        });
+      $.each(settings.tips, function(index) {
+        var sanitizedTip = $.extend(true, {}, settings.tipBluePrint, this),
+            lastTip = index == settings.tips.length - 1;
 
-        this.bindDismissTips();
+        self.createTip(sanitizedTip, lastTip);
+      });
+
+      this.bindDismissTips();
+
+      if (settings.showOnLoad) {
+        this.showOverlay();
         this.showTip($('.' + settings.namespace + '-container').first());
       }
     },
 
-    /*
+    /**
      * Show and position the tip based on it's properties
      * @param $tipContainer {jQueryObject} the tips to show
      */
@@ -135,25 +139,28 @@
         my : 'center bottom',
         at : 'center bottom',
         of : tipData.position.of,
+        offset : tipData.position.offset,
         collision : 'fit'
       });
+
+      if (settings.highlightElement) {
+        $(tipData.position.of).css('z-index', settings.overlay.zIndex + 1)
+      }
+
+      // Move the user to the tip
+      setTimeout(function() {
+        $('html,body').animate({
+          scrollTop : $(tipData.position.of).offset().top - $(window).scrollTop()
+        }, 'slow');
+      }, 300);
     },
 
-    /*
+    /**
      * Hide the tip and unbind any traces of it
      * @param $tipContainer {jQueryObject} the tip to hide
      */
     hideTip : function($tipContainer) {
       $tipContainer.fadeOut();
-      this.unbindRepositionTip();
-    },
-
-    bindRepositionTip : function() {
-      // Handle browser resizing
-    },
-
-    unbindRepositionTip : function() {
-
     },
 
     // Handle the user interaction with the Tip
@@ -164,13 +171,12 @@
         e.stopPropagation();
 
         var $containers = $('.' + settings.namespace + '-container'),
-            $nextTip = $($containers.get($containers.index($(this).parent())+1));
+            $nextTip = $($containers.get($containers.index($(this).parent()) + 1));
 
         self.hideTip($containers);
 
         // Continue through sequence if there are more tips
         if ($nextTip.length == 0) {
-          self.unbindDismissTips();
           self.hideOverlay();
         } else {
           self.showTip($nextTip);
