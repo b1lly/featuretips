@@ -39,6 +39,8 @@
     }
   };
 
+  var $TIPS_WRAPPER;
+
   // Declare our Plugin behaviors
   var methods = {
 
@@ -47,6 +49,7 @@
       $.extend(true, settings, options);
 
       return this.each(function() {
+        $TIPS_WRAPPER = $(this);
         methods.createOverlay();
         methods.createAllTips();
       });
@@ -106,25 +109,23 @@
           position : 'absolute'
         });
 
-      $(document.body).append($tipContainer);
+      $TIPS_WRAPPER.append($tipContainer);
     },
 
     // Create all the Tips based on the Collection
     createAllTips : function() {
-      var self = this;
-
       $.each(settings.tips, function(index) {
         var sanitizedTip = $.extend(true, {}, settings.tipBluePrint, this),
             lastTip = index == settings.tips.length - 1;
 
-        self.createTip(sanitizedTip, lastTip);
+        methods.createTip(sanitizedTip, lastTip);
       });
 
-      this.bindDismissTips();
+      methods.bindDismissTips.apply(this);
 
       if (settings.showOnLoad) {
-        this.showOverlay();
-        this.showTip($('.' + settings.namespace + '-container').first());
+        methods.showOverlay();
+        methods.showTip($TIPS_WRAPPER.children().first());
       }
     },
 
@@ -165,21 +166,19 @@
 
     // Handle the user interaction with the Tip
     bindDismissTips : function() {
-      var self = this;
-
-      $(document).delegate('.' + settings.namespace + '-container .dismiss', 'click', function(e) {
+      $TIPS_WRAPPER.delegate('.' + settings.namespace + '-container .dismiss', 'click', function(e) {
         e.stopPropagation();
 
-        var $containers = $('.' + settings.namespace + '-container'),
+        var $containers = $TIPS_WRAPPER.children(),
             $nextTip = $($containers.get($containers.index($(this).parent()) + 1));
 
-        self.hideTip($containers);
+        methods.hideTip($containers);
 
         // Continue through sequence if there are more tips
         if ($nextTip.length == 0) {
-          self.hideOverlay();
+          methods.hideOverlay();
         } else {
-          self.showTip($nextTip);
+          methods.showTip($nextTip);
         }
       });
     },
