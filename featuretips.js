@@ -121,7 +121,7 @@
         methods.createTip(sanitizedTip, lastTip);
       });
 
-      methods.bindDismissTips.apply(this);
+      methods.bindDismissTips();
 
       if (settings.showOnLoad) {
         methods.showOverlay();
